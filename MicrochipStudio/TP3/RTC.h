@@ -1,15 +1,15 @@
 #ifndef RTC_H
 #define RTC_H
 
+#include <stdint.h>
 #include "i2c.h"
 
-#define C_Ds1307ReadMode_U8   0xD1u
-#define C_Ds1307WriteMode_U8  0xD0u
-#define C_Ds1307ControlRegAddress_U8 0x07u
-#define C_Ds1307SecondRegAddress_U8 0x00u
+#define DS3231ReadMode   0xD1
+#define DS3231WriteMode  0xD0
+#define DS3231ControlReg 0x68
+#define DS3231SecReg 0x00
 
-typedef struct
-{
+typedef struct {
 	uint8_t sec;
 	uint8_t min;
 	uint8_t hour;

@@ -1,7 +1,7 @@
 #include "Timer_ms.h"
 
 static uint8_t FLAG_F=0, FLAG_COUNTING=0;
-static uint8_t cuentaF=0, flag_top=0;
+static uint32_t cuentaF=0, flag_top=0;
 static uint16_t cuentaT=0;
 static uint32_t cuentaC=0, init_count=0;
 
@@ -21,13 +21,13 @@ ISR(TIMER0_COMPA_vect) { // Rutina de servicio a interrupcion
 }
 
 // Inicializacion del timer
-void TimerInit_ms(uint8_t top){
-	cli();
+void TimerInit_ms(uint32_t top){
+	//cli();
 	
 	//Se inicializa el tiempo de cuenta global
 	init_count = 0;
 	
-	//Se establece el tiempo para el flag
+	//Se establece el tiempo para el flag de la MEF
 	flag_top = top;
 	
 	// Modo CTC TOP: OCRA
@@ -45,8 +45,19 @@ void TimerInit_ms(uint8_t top){
 	// Se habilita la interrupcion COMP A
 	TIMSK0 |= (1<<OCIE0A);
 	
-	sei();
+	//sei();
 }
+
+void Timer_Stop(){
+	// Se deshabilita la interrupcion COMP A
+	TIMSK0 &= ~(1<<OCIE0A);
+}
+
+void Timer_Start(){
+	// Se habilita la interrupcion COMP A
+	TIMSK0 |= (1<<OCIE0A);
+}
+
 // Tiempo desde que inicio el programa
 uint32_t ActualTime_ms(){
 	return init_count;
@@ -59,6 +70,9 @@ void CronoInit_ms(){
 }
 uint32_t CronoStop_ms(){
 	FLAG_COUNTING = 0; // Se indica que no se debe contar más
+	return cuentaC; // Se devuelve el tiempo transcurrido
+}
+uint32_t CronoCount_ms(){
 	return cuentaC; // Se devuelve el tiempo transcurrido
 }
 

@@ -8,7 +8,11 @@
 ISR(IRQ_request);
 
 // Inicializacion del timer
-void TimerInit_ms(uint8_t flag_top);
+void TimerInit_ms(uint32_t flag_top);
+
+void Timer_Stop();
+
+void Timer_Start();
 
 // Tiempo desde que inicio el programa
 uint32_t ActualTime_ms();
@@ -16,6 +20,7 @@ uint32_t ActualTime_ms();
 // Cronometro
 void CronoInit_ms();
 uint32_t CronoStop_ms();
+uint32_t CronoCount_ms();
 
 // Temporizador
 void TempoInit_ms(uint16_t cant);

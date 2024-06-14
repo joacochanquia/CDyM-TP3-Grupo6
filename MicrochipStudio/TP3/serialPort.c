@@ -5,11 +5,11 @@
  *  Author: vfperri
  */ 
 
-#include "SerialPort.h"
+#include "serialPort.h"
 
-// ------ Definiciones de Funciones Públicas -------------------
+// ------ Definiciones de Funciones Pï¿½blicas -------------------
 
-// Inicialización de Puerto Serie
+// Inicializaciï¿½n de Puerto Serie
 
 void SerialPort_Init(uint8_t config){
 	// config = 0x33 ==> Configuro UART 9600bps, 8 bit data, 1 stop @ F_CPU = 8MHz.
@@ -21,7 +21,7 @@ void SerialPort_Init(uint8_t config){
 }
 
 
-// Inicialización de Transmisor
+// Inicializaciï¿½n de Transmisor
 
 void SerialPort_TX_Enable(void){
 	UCSR0B |= (1<<TXEN0);
@@ -41,7 +41,7 @@ void SerialPort_TX_Interrupt_Disable(void)
 }
 
 
-// Inicialización de Receptor
+// Inicializaciï¿½n de Receptor
 
 void SerialPort_RX_Enable(void){
 	UCSR0B |= (1<<RXEN0);
@@ -52,7 +52,7 @@ void SerialPort_RX_Interrupt_Enable(void){
 }
 
 
-// Transmisión
+// Transmisiï¿½n
 
 // Espera hasta que el buffer de TX este libre.
 void SerialPort_Wait_For_TX_Buffer_Free(void){
@@ -75,7 +75,7 @@ void SerialPort_Send_String(char * msg){ //msg -> "Hola como andan hoy?" 20 ASCI
 }
 
 
-// Recepción
+// Recepciï¿½n
 
 // Espera hasta que el buffer de RX este completo.
 void SerialPort_Wait_Until_New_Data(void){
@@ -89,12 +89,11 @@ char SerialPort_Recive_Data(void){
 }
 
 
-void SerialPort_Send_uint8_t(uint8_t num){
+void SerialPort_Send_uint8_t(uint8_t num){	
 	
-	SerialPort_Wait_For_TX_Buffer_Free();
-	SerialPort_Send_Data('0'+num/100);
-	
-	num-=100;
+	if (num >= 100){
+		num -= 100;
+	}
 	
 	SerialPort_Wait_For_TX_Buffer_Free();
 	SerialPort_Send_Data('0'+num/10);
