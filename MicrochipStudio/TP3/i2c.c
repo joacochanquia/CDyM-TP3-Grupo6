@@ -1,53 +1,32 @@
 #include "i2c.h"
 #include <avr/io.h>
 
-#include "serialPort.h"
-#include "Timer_ms.h"
-
 void I2C_Init(){
-    TWSR = 0X00;
-    TWBR = 255;
-    TWCR = 0X44;
+    TWSR = 0X00; // Establece los bits del prescaler en 0
+    TWBR = 255; // Establece la frecuencia de SCL
+    TWCR = 0X44; // Habilita el modulo TWI
 }
 
 void I2C_Start(){
-	/*CronoInit_ms();*/
-    TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
-    while((TWCR & (1<<TWINT)) == 0){
-// 		if (CronoCount_ms() == 2000){
-// 			SerialPort_Send_String("ERROR I2C START - ");
-// 			return;
-// 		}
-	}
+    TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); // Inicia la condición de start
+    while((TWCR & (1<<TWINT)) == 0); // Espera hasta que se complete la condición de start
 }
 
 void I2C_Write(unsigned char data){
-    TWDR = data;
-    TWCR = (1<<TWINT)|(1<<TWEN);
-    /*CronoInit_ms();*/ 
-    while((TWCR & (1<<TWINT)) == 0){
-// 		if (CronoCount_ms() == 2000){
-// 			SerialPort_Send_String("ERROR I2C WRITE - ");
-// 			return;
-// 		}
-	}
+    TWDR = data; // Carga el dato a enviar en el registro de datos
+    TWCR = (1<<TWINT)|(1<<TWEN); // Inicia la transferencia de datos
+    while((TWCR & (1<<TWINT)) == 0); // Espera hasta que se complete la transferencia
 }
 
 unsigned char I2C_Read(unsigned char isLast){
     if(isLast == 0)
-        TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
+        TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA); // Acknowledge después de la lectura
     else
-        TWCR = (1<<TWINT)|(1<<TWEN);
-    /*CronoInit_ms();*/
-    while((TWCR & (1<<TWINT)) == 0){
-// 		if (CronoCount_ms() == 2000){
-// 			SerialPort_Send_String("ERROR I2C READ - ");
-// 			return 0xFF;
-// 		}
-	}
-    return TWDR; 
+        TWCR = (1<<TWINT)|(1<<TWEN); // No Acknowledge después de la lectura
+    while((TWCR & (1<<TWINT)) == 0); // Espera hasta que se complete la lectura
+    return TWDR; // Retorna el dato leído
 }
 
 void I2C_Stop(){
-    TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN);
+    TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN); // Genera la condición de stop
 }

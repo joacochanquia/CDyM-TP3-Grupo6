@@ -17,12 +17,12 @@ typedef struct {
 	uint8_t date;
 	uint8_t month;
 	uint8_t year;
-}rtc_t;
+}rtc_data;
 
-void RTC_Init(void);
+void RTC_Init();
 
-void RTC_SetDateTime(rtc_t *rtc);
+void RTC_SetDateTime(rtc_data *data);
 
-void RTC_GetDateTime(rtc_t *rtc);
+void RTC_GetDateTime(rtc_data *data);
 
 #endif

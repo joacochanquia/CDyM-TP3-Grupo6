@@ -22,7 +22,7 @@ uint8_t active = 1;
 int main(void)
 {
 	dht_data TyRH;
-	rtc_t Time;
+	rtc_data Time;
 	
 	TimerInit_ms(2000);
 	
@@ -33,8 +33,9 @@ int main(void)
 	SerialPort_RX_Interrupt_Enable();	// Activo Interrupción de recepcion.
 	sei();
 	
-	RTC_Init();
+	RTC_Init();  // Se inicializa el modulo RTC y la interfaz I2C
 	
+	// Se establece una hora inicial
 	Time.hour = 14;
 	Time.min = 15;
 	Time.sec = 0;
@@ -45,23 +46,23 @@ int main(void)
 	
 	while (1) 
 	{
-		if(GetFLAG_ms() && active){
+		if(GetFLAG_ms() && active){ // Si se recibio una interrupcion y el sistema se encuentra activo
 			SetFLAG_ms(0);
 			
-			TyRH = GetTyRH();
+			TyRH = GetTyRH(); // Se consulta al sensor DHT por la temperatura y humedad
 			
-			if (!(TyRH.T == 0xFF)){
-				SerialPort_Send_String("TEMP: ");
+			if (!(TyRH.T == 0xFF)){ // Si la lectura fue exitosa
+				SerialPort_Send_String("TEMP: "); // Se imprimen los datos de T y RH
 				SerialPort_Send_uint8_t(TyRH.T);
 				SerialPort_Send_String(" C HUM: ");
 				SerialPort_Send_uint8_t(TyRH.RH);
 				SerialPort_Send_String("% ");
 			}else{
-				SerialPort_Send_String("Problema en modulo DHT (");
+				SerialPort_Send_String("Problema en modulo DHT ("); // Se informa el error en la terminal
 				SerialPort_Send_uint8_t(TyRH.RH);
 				SerialPort_Send_String(")\r\n");
 			}
-			RTC_GetDateTime(&Time);
+			RTC_GetDateTime(&Time);  // Se consigue la fecha y hora actual del modulo RTC
 			SerialPort_Send_String("FECHA: ");
 			SerialPort_Send_uint8_t(Time.date);
 			SerialPort_Send_String("/");
@@ -84,8 +85,8 @@ int main(void)
 ISR(USART_RX_vect){
 	char RX_Buffer = UDR0; //la lectura del UDR borra flag RXC
 	// Si se presiona 's' se alterna la transmision de datos
-	if((RX_Buffer == 's')||(RX_Buffer == 'S')){
-		active ^= 1;
+	if((RX_Buffer == 's')||(RX_Buffer == 'S')){ // Si se presiono una S
+		active ^= 1; // Se activa o desactiva el sistema
 	}
 	RX_Buffer=0;
 }
